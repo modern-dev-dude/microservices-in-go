@@ -3,16 +3,33 @@ package cp2
 import (
 	"encoding/json"
 	"encoding/xml"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
+
+	"github.com/google/uuid"
+	"github.com/modern-dev-dude/microservices-in-go/pkg/Logger"
 )
 
-func Greet(w http.ResponseWriter, _ *http.Request) {
+func Greet(w http.ResponseWriter, r *http.Request) {
+	reqId := generateReqId()
+	Logger.WriteLogToConsole(r, reqId)
+
 	fmt.Fprint(w, "hello")
 }
 
 func GetAllCustomers(w http.ResponseWriter, r *http.Request) {
+	reqId := generateReqId()
+	Logger.WriteLogToConsole(r, reqId)
+
+	err := isNotCorrectMethod(w, r, "GET")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
 	customers := generateCustomers()
 
 	if r.Header.Get("Content-Type") == "application/xml" {
@@ -25,6 +42,17 @@ func GetAllCustomers(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetCustomer(w http.ResponseWriter, r *http.Request) {
+	reqId := generateReqId()
+	Logger.WriteLogToConsole(r, reqId)
+
+	err := isNotCorrectMethod(w, r, "GET")
+
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	fmt.Printf("Method : %v\n", r.Method)
 	customers := generateCustomers()
 
 	if customerId, err := strconv.Atoi(r.PathValue("cusomter_id")); err == nil {
@@ -43,5 +71,17 @@ func GetCustomer(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - an error occured"))
 	}
+}
 
+func isNotCorrectMethod(w http.ResponseWriter, r *http.Request, allowedMethod string) error {
+	if r.Method != allowedMethod {
+		w.Header().Set("Allow", allowedMethod)
+		http.Error(w, "This method is not allowed", http.StatusMethodNotAllowed)
+		return errors.New("this method is not allowed")
+	}
+	return nil
+}
+
+func generateReqId() string {
+	return uuid.New().String()
 }
