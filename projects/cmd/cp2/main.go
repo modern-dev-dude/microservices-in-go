@@ -21,7 +21,6 @@ func greetHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/greet", greetHandler)
 	http.HandleFunc("/customers", getAllCustomers)
-	http.HandleFunc("/customers-xml", getAllCustomersXml)
 
 	log.Fatal(http.ListenAndServe("localhost:8000", nil))
 }
@@ -51,13 +50,11 @@ func generateCustomers() []Customer {
 func getAllCustomers(w http.ResponseWriter, r *http.Request) {
 	customers := generateCustomers()
 
+	if r.Header.Get("Content-Type") == "application/xml" {
+		w.Header().Add("Content-Type", "application/xml")
+		xml.NewEncoder(w).Encode(customers)
+		return
+	}
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(customers)
-}
-
-func getAllCustomersXml(w http.ResponseWriter, r *http.Request) {
-	customers := generateCustomers()
-
-	w.Header().Add("Content-Type", "application/xml")
-	xml.NewEncoder(w).Encode(customers)
 }
