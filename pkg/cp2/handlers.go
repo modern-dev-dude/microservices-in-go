@@ -5,6 +5,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
+	"strconv"
 )
 
 func Greet(w http.ResponseWriter, _ *http.Request) {
@@ -21,4 +22,26 @@ func GetAllCustomers(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(customers)
+}
+
+func GetCustomer(w http.ResponseWriter, r *http.Request) {
+	customers := generateCustomers()
+
+	if customerId, err := strconv.Atoi(r.PathValue("cusomter_id")); err == nil {
+		fmt.Printf("Customer id %v\n", customerId)
+		for _, customer := range customers {
+			if customer.Id == customerId {
+				w.WriteHeader(http.StatusOK)
+				json.NewEncoder(w).Encode(customer)
+				return
+			}
+		}
+
+		w.WriteHeader(http.StatusNotFound)
+		w.Write([]byte("404 - customer doesn't exist"))
+	} else {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("500 - an error occured"))
+	}
+
 }
