@@ -36,7 +36,5 @@ func NewCustomerRepositoryStub() CustomerRepositoryStub {
 		},
 	}
 
-	return CustomerRepositoryStub{
-		customers: customers,
-	}
+	return CustomerRepositoryStub{customers}
 }
