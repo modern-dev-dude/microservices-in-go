@@ -12,10 +12,12 @@ import (
 	"github.com/modern-dev-dude/microservices-in-go/pkg/Logger"
 )
 
+// place customers in memory for testing
+var customers = generateCustomers()
+
 func Greet(w http.ResponseWriter, r *http.Request) {
 	reqId := generateReqId()
 	Logger.WriteLogToConsole(r, reqId)
-
 	fmt.Fprint(w, "hello")
 }
 
@@ -24,19 +26,17 @@ func GetAllCustomers(w http.ResponseWriter, r *http.Request) {
 	Logger.WriteLogToConsole(r, reqId)
 
 	err := isNotCorrectMethod(w, r, "GET")
-
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
-
-	customers := generateCustomers()
 
 	if r.Header.Get("Content-Type") == "application/xml" {
 		w.Header().Add("Content-Type", "application/xml")
 		xml.NewEncoder(w).Encode(customers)
 		return
 	}
+
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(customers)
 }
@@ -46,14 +46,10 @@ func GetCustomer(w http.ResponseWriter, r *http.Request) {
 	Logger.WriteLogToConsole(r, reqId)
 
 	err := isNotCorrectMethod(w, r, "GET")
-
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return
 	}
-
-	fmt.Printf("Method : %v\n", r.Method)
-	customers := generateCustomers()
 
 	if customerId, err := strconv.Atoi(r.PathValue("cusomter_id")); err == nil {
 		fmt.Printf("Customer id %v\n", customerId)
@@ -71,6 +67,34 @@ func GetCustomer(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - an error occured"))
 	}
+}
+
+func AddCustomer(w http.ResponseWriter, r *http.Request) {
+	reqId := generateReqId()
+	Logger.WriteLogToConsole(r, reqId)
+
+	err := isNotCorrectMethod(w, r, "POST")
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+		return
+	}
+
+	data := Customer{}
+	err = json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		fmt.Printf("Error: %v\n", err)
+	}
+
+	customers = append(customers, Customer{
+		// Today me is happy, but a later version will forget this when working with concurrent connections and will be sad
+		Id:      customers[len(customers)-1].Id + 1,
+		Name:    data.Name,
+		City:    data.City,
+		Zipcode: data.Zipcode,
+	})
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(customers)
 }
 
 func isNotCorrectMethod(w http.ResponseWriter, r *http.Request, allowedMethod string) error {

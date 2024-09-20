@@ -11,10 +11,9 @@ type LogBody struct {
 	id     string
 	ip     string
 	method string
-	msg    string
 }
 
-func WriteLogToConsole(r *http.Request, reqId string, msg string) {
+func WriteLogToConsole(r *http.Request, reqId string) {
 	ip, err := getIp(r)
 	// silently fail if the ip is not found
 	if err != nil {
@@ -29,7 +28,6 @@ func WriteLogToConsole(r *http.Request, reqId string, msg string) {
 		id:     reqId,
 		ip:     ip,
 		method: r.Method,
-		msg:    msg,
 	}
 
 	fmt.Printf("Request body: %v", requestInfo)
