@@ -3,7 +3,6 @@ package Logger
 import (
 	"errors"
 	"fmt"
-	"io"
 	"net"
 	"net/http"
 )
@@ -12,17 +11,16 @@ type LogBody struct {
 	id     string
 	ip     string
 	method string
-	body   string
+	msg    string
 }
 
-func WriteLogToConsole(r *http.Request, reqId string) {
+func WriteLogToConsole(r *http.Request, reqId string, msg string) {
 	ip, err := getIp(r)
 	// silently fail if the ip is not found
 	if err != nil {
 		fmt.Printf("Error getting IP: %v", err)
 	}
 
-	reqBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		fmt.Printf("Error getting body: %v", err)
 	}
@@ -31,7 +29,7 @@ func WriteLogToConsole(r *http.Request, reqId string) {
 		id:     reqId,
 		ip:     ip,
 		method: r.Method,
-		body:   string(reqBody),
+		msg:    msg,
 	}
 
 	fmt.Printf("Request body: %v", requestInfo)
