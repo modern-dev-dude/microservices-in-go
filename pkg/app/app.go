@@ -11,9 +11,7 @@ import (
 func Start() {
 	mux := http.NewServeMux()
 
-	customerHandlers := CustomerHandlers{
-		service: service.NewCustomerService(domain.NewCustomerRepositoryStub()),
-	}
+	customerHandlers := CustomerHandlers{service.NewCustomerService(domain.NewCustomerRepositoryStub())}
 
 	mux.HandleFunc("/customers", customerHandlers.getAllCustomersHandler)
 
