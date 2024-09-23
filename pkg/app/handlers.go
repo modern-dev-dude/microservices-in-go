@@ -10,12 +10,32 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
+	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/service"
 )
 
 type CustomerHandlers struct {
 	service service.CustomerService
+}
+
+// enum for  content types
+const (
+	_xml = iota
+	_json
+)
+
+func getContentType(ct int) (string, error) {
+	switch ct {
+	case 0:
+		return "application/xml", nil
+
+	case 1:
+		return "application/json", nil
+
+	default:
+		return "", errors.New("unsupported content type")
+	}
 }
 
 func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
@@ -35,13 +55,13 @@ func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *htt
 	}
 
 	if r.Header.Get("Content-Type") == "application/xml" {
-		w.Header().Add("Content-Type", "application/xml")
-		xml.NewEncoder(w).Encode(customers)
+		writeResposne(w, http.StatusNotFound, customers, _xml)
+
 		return
 	}
 
-	w.Header().Add("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(customers)
+	writeResposne(w, http.StatusOK, customers, _json)
+
 }
 
 func (ch *CustomerHandlers) getCustomerHandler(w http.ResponseWriter, r *http.Request) {
@@ -50,20 +70,45 @@ func (ch *CustomerHandlers) getCustomerHandler(w http.ResponseWriter, r *http.Re
 	// check if id is an int
 	_, err := strconv.Atoi(customerId)
 	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, "not found")
-		// dump error to a server log if this was in prod
+		writeResposne(w, http.StatusNotFound, &errs.AppErr{
+			Message: "not found",
+		}, _json)
+
+		// dump error to a server
 		log.Printf("customer id is not of type int customer id: %v\n", customerId)
 		return
 	}
 
 	customer, errs := ch.service.GetCustomer(customerId)
 	if errs != nil {
-		w.WriteHeader(errs.Code)
-		fmt.Fprintf(w, errs.Message)
+		writeResposne(w, http.StatusNotFound, errs.AsMessage(), _json)
+		// dump error to server
+		log.Printf("code: %v\nmessage: %v", errs.Code, errs.Message)
 	} else {
-		w.Header().Add("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(customer)
+		if r.Header.Get("Content-Type") == "application/xml" {
+			writeResposne(w, http.StatusNotFound, customer, _xml)
+			return
+		}
+
+		writeResposne(w, http.StatusOK, customer, _json)
+	}
+}
+
+func writeResposne(w http.ResponseWriter, code int, data interface{}, ct int) {
+	contentType, err := getContentType(ct)
+	if err != nil {
+		log.Println(err.Error())
+	}
+
+	w.Header().Add("Content-Type", contentType)
+	w.WriteHeader(code)
+
+	if ct == _xml {
+		xml.NewEncoder(w).Encode(data)
+	}
+
+	if ct == _json {
+		json.NewEncoder(w).Encode(data)
 	}
 }
 
