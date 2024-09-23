@@ -10,7 +10,7 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/Logger"
+	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/service"
 )
 
@@ -20,7 +20,7 @@ type CustomerHandlers struct {
 
 func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
 	reqId := generateReqId()
-	Logger.WriteLogToConsole(r, reqId)
+	logger.WriteLogToConsole(r, reqId)
 
 	err := isNotCorrectMethod(w, r, "GET")
 	if err != nil {
