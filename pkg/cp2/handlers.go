@@ -9,7 +9,7 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/Logger"
+	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
 )
 
 // place customers in memory for testing
@@ -17,13 +17,13 @@ var customers = generateCustomers()
 
 func Greet(w http.ResponseWriter, r *http.Request) {
 	reqId := generateReqId()
-	Logger.WriteLogToConsole(r, reqId)
+	logger.WriteLogToConsole(r, reqId)
 	fmt.Fprint(w, "hello")
 }
 
 func GetAllCustomers(w http.ResponseWriter, r *http.Request) {
 	reqId := generateReqId()
-	Logger.WriteLogToConsole(r, reqId)
+	logger.WriteLogToConsole(r, reqId)
 
 	err := isNotCorrectMethod(w, r, "GET")
 	if err != nil {
@@ -43,7 +43,7 @@ func GetAllCustomers(w http.ResponseWriter, r *http.Request) {
 
 func GetCustomer(w http.ResponseWriter, r *http.Request) {
 	reqId := generateReqId()
-	Logger.WriteLogToConsole(r, reqId)
+	logger.WriteLogToConsole(r, reqId)
 
 	err := isNotCorrectMethod(w, r, "GET")
 	if err != nil {
@@ -71,7 +71,7 @@ func GetCustomer(w http.ResponseWriter, r *http.Request) {
 
 func AddCustomer(w http.ResponseWriter, r *http.Request) {
 	reqId := generateReqId()
-	Logger.WriteLogToConsole(r, reqId)
+	logger.WriteLogToConsole(r, reqId)
 
 	err := isNotCorrectMethod(w, r, "POST")
 	if err != nil {
