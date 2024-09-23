@@ -147,6 +147,70 @@
           }
         }
       ]
+    },
+    {
+      "type": "folder",
+      "name": "microservice",
+      "items": [
+        {
+          "type": "http",
+          "name": "all-customers",
+          "seq": 1,
+          "request": {
+            "url": "{{baseurl}}/customers",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "customer-by-id",
+          "seq": 2,
+          "request": {
+            "url": "{{baseurl}}/customers/1001",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/xml",
+                "enabled": true
+              }
+            ],
+            "params": [],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        }
+      ]
     }
   ],
   "environments": [],
