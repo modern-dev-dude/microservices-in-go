@@ -19,6 +19,7 @@ func Start() {
 	customerHandlers := CustomerHandlers{service.NewCustomerService(domain)}
 
 	mux.HandleFunc("/customers", customerHandlers.getAllCustomersHandler)
+	mux.HandleFunc("/customers/{id}", customerHandlers.getCustomerHandler)
 
 	log.Fatal(http.ListenAndServe("localhost:8000", mux))
 }

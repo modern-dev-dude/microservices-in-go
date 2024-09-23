@@ -3,6 +3,7 @@ package domain
 import (
 	"database/sql"
 	"fmt"
+	"log"
 	"time"
 
 	_ "github.com/mattn/go-sqlite3"
@@ -12,6 +13,19 @@ var connectionString string = "./microservice-in-go.db"
 
 type CustomerRepositoryDb struct {
 	db *sql.DB
+}
+
+func NewCustomerRepositoryDb() (CustomerRepositoryDb, error) {
+	db, err := sql.Open("sqlite3", connectionString)
+	if err != nil {
+		return CustomerRepositoryDb{}, err
+	}
+
+	db.SetConnMaxLifetime(time.Minute * 3)
+	db.SetMaxOpenConns(10)
+	db.SetMaxIdleConns(10)
+
+	return CustomerRepositoryDb{db}, nil
 }
 
 func (reciever CustomerRepositoryDb) FindAll() ([]Customer, error) {
@@ -36,15 +50,15 @@ func (reciever CustomerRepositoryDb) FindAll() ([]Customer, error) {
 	return customers, nil
 }
 
-func NewCustomerRepositoryDb() (CustomerRepositoryDb, error) {
-	db, err := sql.Open("sqlite3", connectionString)
+func (reciever CustomerRepositoryDb) GetCustomerById(id string) (*Customer, error) {
+	row := reciever.db.QueryRow("select * from customers where customer_id = ?", id)
+
+	var customer Customer
+	err := row.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Zipcode, &customer.DateOfBirth, &customer.Status)
 	if err != nil {
-		return CustomerRepositoryDb{}, err
+		log.Printf("Error while scanning customer with id: %v\n err:%v\n", id, err)
+		return nil, err
 	}
 
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
-
-	return CustomerRepositoryDb{db}, nil
+	return &customer, nil
 }

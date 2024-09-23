@@ -5,7 +5,9 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/google/uuid"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/Logger"
@@ -40,6 +42,29 @@ func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *htt
 
 	w.Header().Add("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(customers)
+}
+
+func (ch *CustomerHandlers) getCustomerHandler(w http.ResponseWriter, r *http.Request) {
+	// if customerId, err := strconv.Atoi(r.PathValue("cusomter_id")); err == nil
+	customerId := r.PathValue("id")
+	// check if id is an int
+	_, err := strconv.Atoi(customerId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, "404 (not found)")
+		// dump error to a server log if this was in prod
+		log.Printf("customer id is not of type int customer id: %v\n", customerId)
+		return
+	}
+
+	customer, err := ch.service.GetCustomer(customerId)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		fmt.Fprintf(w, err.Error())
+	} else {
+		w.Header().Add("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(customer)
+	}
 }
 
 func isNotCorrectMethod(w http.ResponseWriter, r *http.Request, allowedMethod string) error {

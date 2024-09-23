@@ -17,6 +17,7 @@ type Customer struct {
 	Status      string
 }
 
+// quick  test to see if the sqlite3 is working as intended
 var connectionString string = "./microservice-in-go.db"
 
 func main() {
