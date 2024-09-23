@@ -104,11 +104,15 @@ func writeResposne(w http.ResponseWriter, code int, data interface{}, ct int) {
 	w.WriteHeader(code)
 
 	if ct == _xml {
-		xml.NewEncoder(w).Encode(data)
+		if err := xml.NewEncoder(w).Encode(data); err != nil {
+			panic(err)
+		}
 	}
 
 	if ct == _json {
-		json.NewEncoder(w).Encode(data)
+		if err := json.NewEncoder(w).Encode(data); err != nil {
+			panic(err)
+		}
 	}
 }
 
