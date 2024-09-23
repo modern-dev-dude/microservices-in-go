@@ -6,6 +6,8 @@ import (
 	"log"
 	"time"
 
+	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
+
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -50,14 +52,17 @@ func (reciever CustomerRepositoryDb) FindAll() ([]Customer, error) {
 	return customers, nil
 }
 
-func (reciever CustomerRepositoryDb) GetCustomerById(id string) (*Customer, error) {
+func (reciever CustomerRepositoryDb) GetCustomerById(id string) (*Customer, *errs.AppErr) {
 	row := reciever.db.QueryRow("select * from customers where customer_id = ?", id)
 
 	var customer Customer
 	err := row.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Zipcode, &customer.DateOfBirth, &customer.Status)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, errs.NewNotFoundError("not found")
+		}
 		log.Printf("Error while scanning customer with id: %v\n err:%v\n", id, err)
-		return nil, err
+		return nil, errs.NewInternalServerError("internal server error")
 	}
 
 	return &customer, nil

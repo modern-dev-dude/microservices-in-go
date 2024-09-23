@@ -51,16 +51,16 @@ func (ch *CustomerHandlers) getCustomerHandler(w http.ResponseWriter, r *http.Re
 	_, err := strconv.Atoi(customerId)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, "404 (not found)")
+		fmt.Fprintf(w, "not found")
 		// dump error to a server log if this was in prod
 		log.Printf("customer id is not of type int customer id: %v\n", customerId)
 		return
 	}
 
-	customer, err := ch.service.GetCustomer(customerId)
-	if err != nil {
-		w.WriteHeader(http.StatusNotFound)
-		fmt.Fprintf(w, err.Error())
+	customer, errs := ch.service.GetCustomer(customerId)
+	if errs != nil {
+		w.WriteHeader(errs.Code)
+		fmt.Fprintf(w, errs.Message)
 	} else {
 		w.Header().Add("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(customer)
