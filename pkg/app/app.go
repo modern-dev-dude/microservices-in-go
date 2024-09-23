@@ -11,7 +11,12 @@ import (
 func Start() {
 	mux := http.NewServeMux()
 
-	customerHandlers := CustomerHandlers{service.NewCustomerService(domain.NewCustomerRepositoryStub())}
+	// customerHandlers := CustomerHandlers{service.NewCustomerService(domain.NewCustomerRepositoryStub())}
+	domain, err := domain.NewCustomerRepositoryDb()
+	if err != nil {
+		log.Fatalf("Error setting up connection to Db err:%v\n", err)
+	}
+	customerHandlers := CustomerHandlers{service.NewCustomerService(domain)}
 
 	mux.HandleFunc("/customers", customerHandlers.getAllCustomersHandler)
 
