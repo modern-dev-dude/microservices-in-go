@@ -30,11 +30,11 @@ func NewCustomerRepositoryDb() (CustomerRepositoryDb, error) {
 	return CustomerRepositoryDb{db}, nil
 }
 
-func (reciever CustomerRepositoryDb) FindAll() ([]Customer, error) {
+func (reciever CustomerRepositoryDb) FindAll() ([]Customer, *errs.AppErr) {
 	rows, err := reciever.db.Query("select * from customers")
 	if err != nil {
 		fmt.Printf("Error while querying customer table err:%v\n", err)
-		return nil, err
+		return nil, errs.NewInternalServerError("internal service error")
 	}
 
 	customers := []Customer{}
@@ -44,7 +44,7 @@ func (reciever CustomerRepositoryDb) FindAll() ([]Customer, error) {
 
 		if err != nil {
 			fmt.Printf("Error while scanning customers err:%v\n", err)
-			return nil, err
+			return nil, errs.NewInternalServerError("internal service error")
 		}
 		customers = append(customers, customer)
 	}

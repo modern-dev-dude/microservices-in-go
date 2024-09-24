@@ -48,15 +48,14 @@ func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	customers, err := ch.service.GetAllCustomers()
-	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+	customers, errs := ch.service.GetAllCustomers()
+	if errs != nil {
+		writeResposne(w, http.StatusNotFound, errs.AsMessage(), _json)
 		return
 	}
 
 	if r.Header.Get("Content-Type") == "application/xml" {
 		writeResposne(w, http.StatusNotFound, customers, _xml)
-
 		return
 	}
 
@@ -70,9 +69,7 @@ func (ch *CustomerHandlers) getCustomerHandler(w http.ResponseWriter, r *http.Re
 	// check if id is an int
 	_, err := strconv.Atoi(customerId)
 	if err != nil {
-		writeResposne(w, http.StatusNotFound, &errs.AppErr{
-			Message: "not found",
-		}, _json)
+		writeResposne(w, http.StatusNotFound, errs.NewNotFoundError("not found").AsMessage(), _json)
 
 		// dump error to a server
 		log.Printf("customer id is not of type int customer id: %v\n", customerId)
@@ -89,7 +86,6 @@ func (ch *CustomerHandlers) getCustomerHandler(w http.ResponseWriter, r *http.Re
 			writeResposne(w, http.StatusNotFound, customer, _xml)
 			return
 		}
-
 		writeResposne(w, http.StatusOK, customer, _json)
 	}
 }
