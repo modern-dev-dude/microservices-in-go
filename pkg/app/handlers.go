@@ -49,10 +49,6 @@ func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *htt
 	}
 
 	status := r.URL.Query().Get("status")
-	if err != nil {
-		writeResposne(w, http.StatusNotFound, errs.NewInternalServerError("incorrect status").AsMessage(), _json)
-		return
-	}
 	customers, errs := ch.service.GetAllCustomers(status)
 	if errs != nil {
 		writeResposne(w, http.StatusNotFound, errs.AsMessage(), _json)
