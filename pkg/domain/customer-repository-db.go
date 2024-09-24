@@ -1,9 +1,11 @@
 package domain
 
 import (
+	"bytes"
 	"database/sql"
 	"fmt"
 	"log"
+	"text/template"
 	"time"
 
 	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
@@ -30,8 +32,16 @@ func NewCustomerRepositoryDb() (CustomerRepositoryDb, error) {
 	return CustomerRepositoryDb{db}, nil
 }
 
-func (reciever CustomerRepositoryDb) FindAll() ([]Customer, *errs.AppErr) {
-	rows, err := reciever.db.Query("select * from customers")
+func (reciever CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppErr) {
+	if status == "active" {
+		status = "1"
+	}
+	if status == "inactive" {
+		status = "0"
+	}
+
+	queryStr := generateQueryStringByStatus(status)
+	rows, err := reciever.db.Query(queryStr)
 	if err != nil {
 		fmt.Printf("Error while querying customer table err:%v\n", err)
 		return nil, errs.NewInternalServerError("internal service error")
@@ -66,4 +76,30 @@ func (reciever CustomerRepositoryDb) GetCustomerById(id string) (*Customer, *err
 	}
 
 	return &customer, nil
+}
+
+type QueryTemplate struct {
+	Status string
+}
+
+func generateQueryStringByStatus(status string) string {
+	tmpl, err := template.New("").Parse(`
+		select * from customers 
+		{{if .Status}} where status='{{.Status}}'{{end}}`)
+
+	if err != nil {
+		fmt.Printf("Error getting status:%v\n", tmpl)
+
+	}
+
+	data := QueryTemplate{status}
+
+	var qsBuf bytes.Buffer
+	err = tmpl.Execute(&qsBuf, data)
+	if err != nil {
+		fmt.Printf("Error getting status:%v\n", tmpl)
+
+	}
+
+	return qsBuf.String()
 }

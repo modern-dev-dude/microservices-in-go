@@ -48,7 +48,12 @@ func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	customers, errs := ch.service.GetAllCustomers()
+	status := r.URL.Query().Get("status")
+	if err != nil {
+		writeResposne(w, http.StatusNotFound, errs.NewInternalServerError("incorrect status").AsMessage(), _json)
+		return
+	}
+	customers, errs := ch.service.GetAllCustomers(status)
 	if errs != nil {
 		writeResposne(w, http.StatusNotFound, errs.AsMessage(), _json)
 		return
@@ -64,7 +69,6 @@ func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *htt
 }
 
 func (ch *CustomerHandlers) getCustomerHandler(w http.ResponseWriter, r *http.Request) {
-	// if customerId, err := strconv.Atoi(r.PathValue("cusomter_id")); err == nil
 	customerId := r.PathValue("id")
 	// check if id is an int
 	_, err := strconv.Atoi(customerId)
