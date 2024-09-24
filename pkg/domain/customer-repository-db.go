@@ -6,6 +6,7 @@ import (
 	"text/template"
 	"time"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
 
@@ -15,11 +16,11 @@ import (
 var connectionString string = "./microservice-in-go.db"
 
 type CustomerRepositoryDb struct {
-	db *sql.DB
+	db *sqlx.DB
 }
 
 func NewCustomerRepositoryDb() (CustomerRepositoryDb, error) {
-	db, err := sql.Open("sqlite3", connectionString)
+	db, err := sqlx.Open("sqlite3", connectionString)
 	if err != nil {
 		return CustomerRepositoryDb{}, err
 	}
@@ -39,33 +40,21 @@ func (reciever CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.A
 		status = "0"
 	}
 
+	customers := []Customer{}
+
 	queryStr := generateQueryStringByStatus(status)
-	rows, err := reciever.db.Query(queryStr)
+	err := reciever.db.Select(&customers, queryStr)
 	if err != nil {
 		logger.CustomError("Error while querying customer table" + err.Error())
 		return nil, errs.NewInternalServerError("internal service error")
-	}
-
-	customers := []Customer{}
-	for rows.Next() {
-		var customer Customer
-		err := rows.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Zipcode, &customer.DateOfBirth, &customer.Status)
-
-		if err != nil {
-			logger.CustomError("Error while scanning customers " + err.Error())
-			return nil, errs.NewInternalServerError("internal service error")
-		}
-		customers = append(customers, customer)
 	}
 
 	return customers, nil
 }
 
 func (reciever CustomerRepositoryDb) GetCustomerById(id string) (*Customer, *errs.AppErr) {
-	row := reciever.db.QueryRow("select * from customers where customer_id = ?", id)
-
 	var customer Customer
-	err := row.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Zipcode, &customer.DateOfBirth, &customer.Status)
+	err := reciever.db.Get(&customer, "select * from customers where customer_id = ?", id)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			logger.CustomError("no rows found" + err.Error())
