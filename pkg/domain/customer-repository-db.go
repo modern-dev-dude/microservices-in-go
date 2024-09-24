@@ -3,12 +3,11 @@ package domain
 import (
 	"bytes"
 	"database/sql"
-	"fmt"
-	"log"
 	"text/template"
 	"time"
 
 	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
+	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -43,7 +42,7 @@ func (reciever CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.A
 	queryStr := generateQueryStringByStatus(status)
 	rows, err := reciever.db.Query(queryStr)
 	if err != nil {
-		fmt.Printf("Error while querying customer table err:%v\n", err)
+		logger.CustomError("Error while querying customer table" + err.Error())
 		return nil, errs.NewInternalServerError("internal service error")
 	}
 
@@ -53,7 +52,7 @@ func (reciever CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.A
 		err := rows.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Zipcode, &customer.DateOfBirth, &customer.Status)
 
 		if err != nil {
-			fmt.Printf("Error while scanning customers err:%v\n", err)
+			logger.CustomError("Error while scanning customers " + err.Error())
 			return nil, errs.NewInternalServerError("internal service error")
 		}
 		customers = append(customers, customer)
@@ -69,9 +68,10 @@ func (reciever CustomerRepositoryDb) GetCustomerById(id string) (*Customer, *err
 	err := row.Scan(&customer.Id, &customer.Name, &customer.City, &customer.Zipcode, &customer.DateOfBirth, &customer.Status)
 	if err != nil {
 		if err == sql.ErrNoRows {
+			logger.CustomError("no rows found" + err.Error())
 			return nil, errs.NewNotFoundError("not found")
 		}
-		log.Printf("Error while scanning customer with id: %v\n err:%v\n", id, err)
+		logger.CustomError("Error while scanning customer with id " + err.Error())
 		return nil, errs.NewInternalServerError("internal server error")
 	}
 
@@ -88,8 +88,7 @@ func generateQueryStringByStatus(status string) string {
 		{{if .Status}} where status='{{.Status}}'{{end}}`)
 
 	if err != nil {
-		fmt.Printf("Error getting status:%v\n", tmpl)
-
+		logger.CustomError("Error getting status " + err.Error())
 	}
 
 	data := QueryTemplate{status}
@@ -97,8 +96,7 @@ func generateQueryStringByStatus(status string) string {
 	var qsBuf bytes.Buffer
 	err = tmpl.Execute(&qsBuf, data)
 	if err != nil {
-		fmt.Printf("Error getting status:%v\n", tmpl)
-
+		logger.CustomError("Error executing status template " + err.Error())
 	}
 
 	return qsBuf.String()

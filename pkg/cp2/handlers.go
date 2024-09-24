@@ -27,7 +27,8 @@ func GetAllCustomers(w http.ResponseWriter, r *http.Request) {
 
 	err := isNotCorrectMethod(w, r, "GET")
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+		logger.CustomError("method is not allowed ")
+
 		return
 	}
 
@@ -47,7 +48,7 @@ func GetCustomer(w http.ResponseWriter, r *http.Request) {
 
 	err := isNotCorrectMethod(w, r, "GET")
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+		logger.CustomError("error converting customer id to an int " + err.Error())
 		return
 	}
 
@@ -60,10 +61,12 @@ func GetCustomer(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+		logger.CustomError("customer doesn't exist")
 
 		w.WriteHeader(http.StatusNotFound)
 		w.Write([]byte("404 - customer doesn't exist"))
 	} else {
+		logger.CustomError("error converting customer id to an int " + err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("500 - an error occured"))
 	}
@@ -75,14 +78,14 @@ func AddCustomer(w http.ResponseWriter, r *http.Request) {
 
 	err := isNotCorrectMethod(w, r, "POST")
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+		logger.CustomError("method is not allowed " + err.Error())
 		return
 	}
 
 	data := Customer{}
 	err = json.NewDecoder(r.Body).Decode(&data)
 	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+		logger.CustomError("Error decoding json " + err.Error())
 	}
 
 	customers = append(customers, Customer{
