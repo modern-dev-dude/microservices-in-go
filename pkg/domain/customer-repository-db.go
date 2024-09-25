@@ -3,6 +3,7 @@ package domain
 import (
 	"bytes"
 	"database/sql"
+	"os"
 	"text/template"
 	"time"
 
@@ -13,14 +14,13 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var connectionString string = "./microservice-in-go.db"
-
 type CustomerRepositoryDb struct {
 	db *sqlx.DB
 }
 
 func NewCustomerRepositoryDb() (CustomerRepositoryDb, error) {
-	db, err := sqlx.Open("sqlite3", connectionString)
+	DbConnectionString := os.Getenv("DB_CONNECTION_STRING")
+	db, err := sqlx.Open("sqlite3", DbConnectionString)
 	if err != nil {
 		return CustomerRepositoryDb{}, err
 	}
