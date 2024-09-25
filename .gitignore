@@ -26,3 +26,4 @@ go.work.sum
 
 # Editor specific files
 .DS_STORE
+.idea
