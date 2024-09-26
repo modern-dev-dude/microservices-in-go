@@ -30,6 +30,22 @@ CREATE TABLE accounts (
 INSERT INTO accounts VALUES
  (1, 1000, '2024-09-09 13:00:00',"savings", 5126.25, "1" );
 
+DROP TABLE IF EXISTS transactions;
+CREATE TABLE transactions (
+    transaction_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    account_id INTEGER,
+    amount INTEGER NOT NULL,
+    transaction_type TEXT NOT NULL,
+    transaction_date DATE NOT NULL
+);
+
+INSERT INTO accounts VALUES
+    (1, 1000, '2024-09-09 13:00:00',"savings", 5126.25, "1" );
+
+
 -- print to show data exist
 select * from customers;
 select * from accounts;
+select * from transactions;
+
+
