@@ -4,12 +4,10 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 
-	"github.com/google/uuid"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/service"
@@ -39,19 +37,19 @@ func getContentType(ct int) (string, error) {
 }
 
 func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *http.Request) {
-	reqId := generateReqId()
+	reqId := GenerateReqId()
 	logger.WriteLogToConsole(r, reqId)
 
-	err := isNotCorrectMethod(w, r, "GET")
-	if err != nil {
-		fmt.Printf("Error: %v\n", err)
+	isCorrectMethod := IsCorrectMethod(w, r, "GET")
+	//  return early logs and response written
+	if isCorrectMethod == false {
 		return
 	}
 
 	status := r.URL.Query().Get("status")
-	customers, errs := ch.service.GetAllCustomers(status)
-	if errs != nil {
-		writeResposne(w, http.StatusNotFound, errs.AsMessage(), _json)
+	customers, err := ch.service.GetAllCustomers(status)
+	if err != nil {
+		writeResposne(w, http.StatusNotFound, err.AsMessage(), _json)
 		return
 	}
 
@@ -69,18 +67,18 @@ func (ch *CustomerHandlers) getCustomerHandler(w http.ResponseWriter, r *http.Re
 	// check if id is an int
 	_, err := strconv.Atoi(customerId)
 	if err != nil {
-		writeResposne(w, http.StatusNotFound, errs.NewNotFoundError("not found").AsMessage(), _json)
-
-		// dump error to a server
-		log.Printf("customer id is not of type int customer id: %v\n", customerId)
+		errMsg := "customer id is not of type int customer id: " + customerId
+		writeResposne(
+			w,
+			http.StatusNotFound,
+			errs.NewNotFoundError(errMsg).AsMessage(),
+			_json)
 		return
 	}
 
-	customer, errs := ch.service.GetCustomer(customerId)
-	if errs != nil {
-		writeResposne(w, http.StatusNotFound, errs.AsMessage(), _json)
-		// dump error to server
-		log.Printf("code: %v\nmessage: %v", errs.Code, errs.Message)
+	customer, appErr := ch.service.GetCustomer(customerId)
+	if appErr != nil {
+		writeResposne(w, http.StatusNotFound, appErr.AsMessage(), _json)
 	} else {
 		if r.Header.Get("Content-Type") == "application/xml" {
 			writeResposne(w, http.StatusNotFound, customer, _xml)
@@ -110,17 +108,4 @@ func writeResposne(w http.ResponseWriter, code int, data interface{}, ct int) {
 			panic(err)
 		}
 	}
-}
-
-func isNotCorrectMethod(w http.ResponseWriter, r *http.Request, allowedMethod string) error {
-	if r.Method != allowedMethod {
-		w.Header().Set("Allow", allowedMethod)
-		http.Error(w, "This method is not allowed", http.StatusMethodNotAllowed)
-		return errors.New("this method is not allowed")
-	}
-	return nil
-}
-
-func generateReqId() string {
-	return uuid.New().String()
 }

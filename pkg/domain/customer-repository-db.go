@@ -3,13 +3,10 @@ package domain
 import (
 	"bytes"
 	"database/sql"
-	"os"
-	"text/template"
-	"time"
-
 	"github.com/jmoiron/sqlx"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
 	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
+	"text/template"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -18,18 +15,8 @@ type CustomerRepositoryDb struct {
 	db *sqlx.DB
 }
 
-func NewCustomerRepositoryDb() (CustomerRepositoryDb, error) {
-	DbConnectionString := os.Getenv("DB_CONNECTION_STRING")
-	db, err := sqlx.Open("sqlite3", DbConnectionString)
-	if err != nil {
-		return CustomerRepositoryDb{}, err
-	}
-
-	db.SetConnMaxLifetime(time.Minute * 3)
-	db.SetMaxOpenConns(10)
-	db.SetMaxIdleConns(10)
-
-	return CustomerRepositoryDb{db}, nil
+func NewCustomerRepositoryDb(dbClient *sqlx.DB) CustomerRepositoryDb {
+	return CustomerRepositoryDb{dbClient}
 }
 
 func (reciever CustomerRepositoryDb) FindAll(status string) ([]Customer, *errs.AppErr) {

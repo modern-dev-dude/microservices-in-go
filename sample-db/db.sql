@@ -16,5 +16,20 @@ INSERT INTO customers values
 (1003, "Tifa Lockheart", "1997-09-15", "Playstation", "99998", 0),
 (1004, "RedXIII", "1997-09-15", "Playstation", "99997", 0);
 
+
+DROP TABLE IF EXISTS accounts;
+CREATE TABLE accounts (
+    account_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER,
+    opening_date DATE NOT NULL,
+    account_type TEXT NOT NULL,
+    amount INTEGER NOT NULL,
+    status INTEGER NOT NULL DEFAULT '1'
+);
+
+INSERT INTO accounts VALUES
+ (1, 1000, '2024-09-09 13:00:00',"savings", 5126.25, "1" );
+
 -- print to show data exist
 select * from customers;
+select * from accounts;

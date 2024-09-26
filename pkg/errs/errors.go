@@ -26,3 +26,17 @@ func NewInternalServerError(msg string) *AppErr {
 		Code:    http.StatusInternalServerError,
 	}
 }
+
+func NewValidationError(msg string) *AppErr {
+	return &AppErr{
+		Message: msg,
+		Code:    http.StatusUnprocessableEntity,
+	}
+}
+
+func NewMethodNotSupportedError(msg string) *AppErr {
+	return &AppErr{
+		Message: msg,
+		Code:    http.StatusMethodNotAllowed,
+	}
+}
