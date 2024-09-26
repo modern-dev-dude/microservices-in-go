@@ -37,14 +37,13 @@ func (a AccountHandler) newAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req = dto.NewAccountRequest{
-		CustomerId: customerId,
-	}
+	var req dto.NewAccountRequest
 
 	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
 		writeResposne(w, http.StatusBadRequest, err.Error(), _json)
 	} else {
+		req.CustomerId = customerId
 		account, appErr := a.service.NewAccount(req)
 		if appErr != nil {
 			writeResposne(w, appErr.Code, appErr.Message, _json)
