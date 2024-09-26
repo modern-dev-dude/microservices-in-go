@@ -9,6 +9,7 @@ import (
 
 type AccountService interface {
 	NewAccount(dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppErr)
+	NewTransaction(request dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppErr)
 }
 
 type DefaultAccountService struct {
@@ -36,7 +37,29 @@ func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAc
 	}
 
 	res := newAccount.ToNewAccountResponseDto()
+	return &res, nil
+}
 
+func (s DefaultAccountService) NewTransaction(req dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppErr) {
+	err := req.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	t := domain.Transaction{
+		TransactionId:   "",
+		Amount:          req.Amount,
+		AccountId:       req.AccountId,
+		TransactionType: req.TransactionType,
+		TransactionDate: time.Now().Format("2006-01-02 15:00:00"),
+	}
+
+	transaction, err := s.repo.NewTransaction(t)
+	if err != nil {
+		return nil, err
+	}
+
+	res := transaction.ToNewTransactionResponseDto()
 	return &res, nil
 }
 

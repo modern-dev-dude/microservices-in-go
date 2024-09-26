@@ -31,6 +31,7 @@ func Start() {
 	mux.HandleFunc("/customers", customerHandlers.getAllCustomersHandler)
 	mux.HandleFunc("/customers/{id}", customerHandlers.getCustomerHandler)
 	mux.HandleFunc("/customers/{id}/account", accountHandler.newAccount)
+	mux.HandleFunc("/customers/{id}/transaction", accountHandler.createTransaction)
 
 	// get env variables
 	host := os.Getenv("SERVER_HOST")

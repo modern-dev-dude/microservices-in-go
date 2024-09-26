@@ -14,12 +14,28 @@ type Account struct {
 	Status      string
 }
 
+type Transaction struct {
+	TransactionId   string
+	AccountId       string
+	Amount          float64
+	TransactionType string
+	TransactionDate string
+}
+
 type AccountRepository interface {
 	Save(Account) (*Account, *errs.AppErr)
+	NewTransaction(Transaction) (*Transaction, *errs.AppErr)
 }
 
 func (a Account) ToNewAccountResponseDto() dto.NewAccountResponse {
 	return dto.NewAccountResponse{
 		AccountId: a.AccountId,
+	}
+}
+
+func (t Transaction) ToNewTransactionResponseDto() dto.NewTransactionResponse {
+	return dto.NewTransactionResponse{
+		TransactionId:  t.AccountId, // TODO fix with transaction ID
+		CurrentBalance: t.Amount,
 	}
 }
