@@ -149,10 +149,15 @@
             ],
             "description": "",
             "url": {
-              "raw": "{{baseurl}}/customers",
+              "raw": "{{baseurl}}/customers?status=active",
               "host": [],
               "path": [],
-              "query": [],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "active"
+                }
+              ],
               "variable": []
             }
           }
@@ -165,18 +170,68 @@
             "header": [
               {
                 "key": "Content-Type",
-                "value": "application/xml",
+                "value": "application/json",
                 "disabled": false,
                 "type": "default"
               }
             ],
             "description": "",
             "url": {
-              "raw": "{{baseurl}}/customers/1001",
+              "raw": "{{baseurl}}/customers/1004",
               "host": [],
               "path": [],
               "query": [],
               "variable": []
+            }
+          }
+        },
+        {
+          "name": "new-account",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "{{baseUrl}}/customers/1001/account",
+              "host": [],
+              "path": [],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"account_type\": \"saving\",\n  \"amount\": 5000.23\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "new-transaction",
+          "event": [],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "description": "",
+            "url": {
+              "raw": "{{baseurl}}/customers/1000/transaction",
+              "host": [],
+              "path": [],
+              "query": [],
+              "variable": []
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"transaction_type\": \"withdraw\",\n  \"amount\": 56.12\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
             }
           }
         }
@@ -186,6 +241,11 @@
   "variable": [
     {
       "key": "baseurl",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "baseUrl",
       "value": "",
       "type": "default"
     }

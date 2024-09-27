@@ -157,7 +157,43 @@
           "name": "all-customers",
           "seq": 1,
           "request": {
-            "url": "{{baseurl}}/customers",
+            "url": "{{baseurl}}/customers?status=active",
+            "method": "GET",
+            "headers": [
+              {
+                "name": "Content-Type",
+                "value": "application/json",
+                "enabled": true
+              }
+            ],
+            "params": [
+              {
+                "name": "status",
+                "value": "active",
+                "type": "query",
+                "enabled": true
+              }
+            ],
+            "body": {
+              "mode": "none",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "customer-by-id",
+          "seq": 2,
+          "request": {
+            "url": "{{baseurl}}/customers/1004",
             "method": "GET",
             "headers": [
               {
@@ -183,21 +219,40 @@
         },
         {
           "type": "http",
-          "name": "customer-by-id",
-          "seq": 2,
+          "name": "new-account",
+          "seq": 3,
           "request": {
-            "url": "{{baseurl}}/customers/1001",
-            "method": "GET",
-            "headers": [
-              {
-                "name": "Content-Type",
-                "value": "application/xml",
-                "enabled": true
-              }
-            ],
+            "url": "{{baseUrl}}/customers/1001/account",
+            "method": "POST",
+            "headers": [],
             "params": [],
             "body": {
-              "mode": "none",
+              "mode": "json",
+              "json": "{\n  \"account_type\": \"saving\",\n  \"amount\": 5000.23\n}",
+              "formUrlEncoded": [],
+              "multipartForm": []
+            },
+            "script": {},
+            "vars": {},
+            "assertions": [],
+            "tests": "",
+            "auth": {
+              "mode": "none"
+            }
+          }
+        },
+        {
+          "type": "http",
+          "name": "new-transaction",
+          "seq": 4,
+          "request": {
+            "url": "{{baseurl}}/customers/1000/transaction",
+            "method": "POST",
+            "headers": [],
+            "params": [],
+            "body": {
+              "mode": "json",
+              "json": "{\n  \"transaction_type\": \"withdraw\",\n  \"amount\": 56.12\n}",
               "formUrlEncoded": [],
               "multipartForm": []
             },
