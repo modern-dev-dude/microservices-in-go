@@ -79,11 +79,10 @@ func (a AccountHandler) createTransaction(w http.ResponseWriter, r *http.Request
 	var req dto.NewTransactionRequest
 
 	err = json.NewDecoder(r.Body).Decode(&req)
+	req.CustomerId = customerId
 	if err != nil {
 		writeResposne(w, http.StatusBadRequest, err.Error(), _json)
 	} else {
-		// TODO get account id based on customer
-		req.AccountId = customerId
 		transaction, appErr := a.service.NewTransaction(req)
 		if appErr != nil {
 			writeResposne(w, appErr.Code, appErr.Message, _json)

@@ -16,7 +16,7 @@ type Account struct {
 
 type Transaction struct {
 	TransactionId   string
-	AccountId       string
+	CustomerId      string
 	Amount          float64
 	TransactionType string
 	TransactionDate string
@@ -35,7 +35,7 @@ func (a Account) ToNewAccountResponseDto() dto.NewAccountResponse {
 
 func (t Transaction) ToNewTransactionResponseDto() dto.NewTransactionResponse {
 	return dto.NewTransactionResponse{
-		TransactionId:  t.AccountId, // TODO fix with transaction ID
+		TransactionId:  t.TransactionId,
 		CurrentBalance: t.Amount,
 	}
 }

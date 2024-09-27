@@ -49,7 +49,7 @@ func (s DefaultAccountService) NewTransaction(req dto.NewTransactionRequest) (*d
 	t := domain.Transaction{
 		TransactionId:   "",
 		Amount:          req.Amount,
-		AccountId:       req.AccountId,
+		CustomerId:      req.CustomerId,
 		TransactionType: req.TransactionType,
 		TransactionDate: time.Now().Format("2006-01-02 15:00:00"),
 	}
