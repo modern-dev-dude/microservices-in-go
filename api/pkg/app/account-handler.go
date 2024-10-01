@@ -2,10 +2,10 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/dto"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/service"
+	dto2 "github.com/modern-dev-dude/microservices-in-go/api/pkg/dto"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/errs"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/logger"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/service"
 	"net/http"
 	"strconv"
 )
@@ -37,7 +37,7 @@ func (a AccountHandler) newAccount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var req dto.NewAccountRequest
+	var req dto2.NewAccountRequest
 
 	err = json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -76,7 +76,7 @@ func (a AccountHandler) createTransaction(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	var req dto.NewTransactionRequest
+	var req dto2.NewTransactionRequest
 
 	err = json.NewDecoder(r.Body).Decode(&req)
 	req.CustomerId = customerId

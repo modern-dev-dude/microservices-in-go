@@ -1,22 +1,22 @@
 package service
 
 import (
-	"github.com/modern-dev-dude/microservices-in-go/pkg/domain"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/dto"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/domain"
+	dto2 "github.com/modern-dev-dude/microservices-in-go/api/pkg/dto"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/errs"
 	"time"
 )
 
 type AccountService interface {
-	NewAccount(dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppErr)
-	NewTransaction(request dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppErr)
+	NewAccount(dto2.NewAccountRequest) (*dto2.NewAccountResponse, *errs.AppErr)
+	NewTransaction(request dto2.NewTransactionRequest) (*dto2.NewTransactionResponse, *errs.AppErr)
 }
 
 type DefaultAccountService struct {
 	repo domain.AccountRepository
 }
 
-func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAccountResponse, *errs.AppErr) {
+func (s DefaultAccountService) NewAccount(req dto2.NewAccountRequest) (*dto2.NewAccountResponse, *errs.AppErr) {
 	err := req.Validate()
 	if err != nil {
 		return nil, err
@@ -40,7 +40,7 @@ func (s DefaultAccountService) NewAccount(req dto.NewAccountRequest) (*dto.NewAc
 	return &res, nil
 }
 
-func (s DefaultAccountService) NewTransaction(req dto.NewTransactionRequest) (*dto.NewTransactionResponse, *errs.AppErr) {
+func (s DefaultAccountService) NewTransaction(req dto2.NewTransactionRequest) (*dto2.NewTransactionResponse, *errs.AppErr) {
 	err := req.Validate()
 	if err != nil {
 		return nil, err

@@ -1,6 +1,8 @@
 package dto
 
-import "github.com/modern-dev-dude/microservices-in-go/pkg/errs"
+import (
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/errs"
+)
 
 type NewAccountRequest struct {
 	CustomerId  string  `json:"customer_id"`

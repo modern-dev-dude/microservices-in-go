@@ -5,11 +5,11 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
+	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
 	"net/http"
 	"strconv"
 
 	"github.com/google/uuid"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
 )
 
 // place customers in memory for testing

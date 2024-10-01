@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"database/sql"
 	"github.com/jmoiron/sqlx"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/errs"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/logger"
 	"text/template"
 
 	_ "github.com/mattn/go-sqlite3"

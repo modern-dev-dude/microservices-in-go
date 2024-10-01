@@ -1,8 +1,8 @@
 package domain
 
 import (
-	"github.com/modern-dev-dude/microservices-in-go/pkg/dto"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
+	dto2 "github.com/modern-dev-dude/microservices-in-go/api/pkg/dto"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/errs"
 )
 
 type Account struct {
@@ -27,14 +27,14 @@ type AccountRepository interface {
 	NewTransaction(Transaction) (*Transaction, *errs.AppErr)
 }
 
-func (a Account) ToNewAccountResponseDto() dto.NewAccountResponse {
-	return dto.NewAccountResponse{
+func (a Account) ToNewAccountResponseDto() dto2.NewAccountResponse {
+	return dto2.NewAccountResponse{
 		AccountId: a.AccountId,
 	}
 }
 
-func (t Transaction) ToNewTransactionResponseDto() dto.NewTransactionResponse {
-	return dto.NewTransactionResponse{
+func (t Transaction) ToNewTransactionResponseDto() dto2.NewTransactionResponse {
+	return dto2.NewTransactionResponse{
 		TransactionId:  t.TransactionId,
 		CurrentBalance: t.Amount,
 	}

@@ -2,7 +2,7 @@ package app
 
 import (
 	"github.com/google/uuid"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/errs"
 	"net/http"
 )
 

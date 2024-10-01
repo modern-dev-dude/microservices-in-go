@@ -2,8 +2,8 @@ package main
 
 import (
 	"github.com/joho/godotenv"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/app"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/app"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/logger"
 )
 
 func main() {

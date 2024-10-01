@@ -1,9 +1,9 @@
 package service
 
 import (
-	"github.com/modern-dev-dude/microservices-in-go/pkg/domain"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/dto"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/domain"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/dto"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/errs"
 )
 
 type CustomerService interface {

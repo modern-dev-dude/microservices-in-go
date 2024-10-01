@@ -1,8 +1,8 @@
 package domain
 
 import (
-	"github.com/modern-dev-dude/microservices-in-go/pkg/dto"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/dto"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/errs"
 )
 
 type Customer struct {

@@ -3,14 +3,13 @@ package app
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
+	domain2 "github.com/modern-dev-dude/microservices-in-go/api/pkg/domain"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/logger"
+	service2 "github.com/modern-dev-dude/microservices-in-go/api/pkg/service"
 	"log"
 	"net/http"
 	"os"
 	"time"
-
-	"github.com/modern-dev-dude/microservices-in-go/pkg/domain"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/service"
 )
 
 func Start() {
@@ -22,11 +21,11 @@ func Start() {
 
 	mux := http.NewServeMux()
 
-	customerRepoDb := domain.NewCustomerRepositoryDb(dbClient)
-	accountRepoDb := domain.NewAccountRepositoryDb(dbClient)
+	customerRepoDb := domain2.NewCustomerRepositoryDb(dbClient)
+	accountRepoDb := domain2.NewAccountRepositoryDb(dbClient)
 
-	customerHandlers := CustomerHandlers{service.NewCustomerService(customerRepoDb)}
-	accountHandler := AccountHandler{service.NewAccountService(accountRepoDb)}
+	customerHandlers := CustomerHandlers{service2.NewCustomerService(customerRepoDb)}
+	accountHandler := AccountHandler{service2.NewAccountService(accountRepoDb)}
 
 	mux.HandleFunc("/customers", customerHandlers.getAllCustomersHandler)
 	mux.HandleFunc("/customers/{id}", customerHandlers.getCustomerHandler)

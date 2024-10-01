@@ -4,13 +4,12 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/errs"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/logger"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/service"
 	"log"
 	"net/http"
 	"strconv"
-
-	"github.com/modern-dev-dude/microservices-in-go/pkg/errs"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/service"
 )
 
 type CustomerHandlers struct {

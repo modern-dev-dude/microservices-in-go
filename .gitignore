@@ -22,7 +22,7 @@ go.work
 go.work.sum
 
 # env file
-.env
+api/.env
 
 # Editor specific files
 .DS_STORE
