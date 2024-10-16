@@ -16,7 +16,10 @@ type CustomerHandlers struct {
 	service service.CustomerService
 }
 
-// enum for  content types
+//type ContentType string
+//const ContentTypeJSON ContentType = "application/json"
+//const ContentTypeXML ContentType = "application/xml"
+
 const (
 	_xml = iota
 	_json
@@ -63,7 +66,6 @@ func (ch *CustomerHandlers) getAllCustomersHandler(w http.ResponseWriter, r *htt
 
 func (ch *CustomerHandlers) getCustomerHandler(w http.ResponseWriter, r *http.Request) {
 	customerId := r.PathValue("id")
-	// check if id is an int
 	_, err := strconv.Atoi(customerId)
 	if err != nil {
 		errMsg := "customer id is not of type int customer id: " + customerId

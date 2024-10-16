@@ -5,7 +5,7 @@ import (
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"github.com/modern-dev-dude/microservices-in-go/pkg/logger"
+	"github.com/modern-dev-dude/microservices-in-go/api/pkg/logger"
 	"net/http"
 	"strconv"
 
